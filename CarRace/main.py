@@ -2,6 +2,7 @@ import pygame
 import sys
 import math
 import player
+import road
 
 # Initialize Pygame
 pygame.init()
@@ -10,25 +11,25 @@ clock = pygame.time.Clock()
 speed = 0
 playerX = 400
 playerY = 560
-carHeight = 68
-carWidth = 36
-rotation_angle = 0
-angular_velocity = 0
-acceleration = 0.05
-deceleration = 0.02
-max_speed = 5
+#carHeight = 68
+#carWidth = 36
+#rotation_angle = 0
+#angular_velocity = 0
+#acceleration = 0.05
+#deceleration = 0.02
+#max_speed = 5
 
 thePlayer = player.Player(screen, playerX, playerY)
 
 # Load car image
-car_image = pygame.image.load("CarRace/images/car-top_view.png")
-car_image = pygame.transform.scale(car_image, (carWidth, carHeight))
+#car_image = pygame.image.load("CarRace/images/car-top_view.png")
+#car_image = pygame.transform.scale(car_image, (carWidth, carHeight))
 
 
 # Load road image
-road_image = pygame.image.load("CarRace/images/road.png")
-road_image = pygame.transform.scale(road_image, (800, 1200))  # Make it taller than the screen
-
+#road_image = pygame.image.load("CarRace/images/road.png")
+#road_image = pygame.transform.scale(road_image, (800, 1200))  # Make it taller than the screen
+theRoad = road.road(screen)
 
 # Font setup
 font = pygame.font.Font(None, 36)
@@ -72,7 +73,7 @@ while True:
 
    # Update road position to create the illusion of movement
  #   road_y += speed
-
+    theRoad.move(thePlayer.get_speedY())
 
    # Reset road position when it goes beyond the image height
 #   if road_y > road_image.get_height():
@@ -84,9 +85,9 @@ while True:
 
 
    # Draw the road
-    screen.blit(road_image, (0, -road_y))
-    screen.blit(road_image, (0, -road_y + road_image.get_height())) 
-
+   # screen.blit(road_image, (0, -road_y))
+   # screen.blit(road_image, (0, -road_y + road_image.get_height())) 
+    theRoad.draw()
 
    # Draw the car with rotation
 #   player = pygame.Rect((playerX - (carWidth / 2)), (playerY - (carHeight / 2)), carWidth, carHeight)

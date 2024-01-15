@@ -18,6 +18,7 @@ class Player:
         self.rotation_speed = 1
         self.maxX = 800
         self.maxY = 600
+        self.speedY = 0
 
     def rotate(self,direction):
         if (direction  != 0):
@@ -38,6 +39,7 @@ class Player:
         # Update velocity components based on the angle
         dx = -math.sin(math.radians(self.rotation_angle)) * self.speed
         dy = -math.cos(math.radians(self.rotation_angle)) * self.speed  # Negative due to inverted Y-axis
+        self.speedY = dy
         # Update player position
         self.positionX += dx
         self.positionY += dy
@@ -55,3 +57,5 @@ class Player:
 
     def get_speed(self):
         return self.speed
+    def get_speedY(self):
+        return self.speedY

@@ -33,7 +33,7 @@ while True:
     screen.fill(GRAY)
     # draw the Player
     player = pygame.Rect((playerX - (carWith/2)), (playerY - (carHight/2)), carWith, carHight )
-    image = pygame.image.load("images/car-top_view.png")
+    image = pygame.image.load("CarRace/images/car-top_view.png")
     image = pygame.transform.scale(image, (carWith, carHight))
     screen.blit(image, player)
     # move player

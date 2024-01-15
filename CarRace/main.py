@@ -1,7 +1,7 @@
 import pygame
 import sys
 import math
-
+import player
 
 # Initialize Pygame
 pygame.init()
@@ -18,6 +18,7 @@ acceleration = 0.05
 deceleration = 0.02
 max_speed = 5
 
+thePlayer = player.Player(screen, playerX, playerY)
 
 # Load car image
 car_image = pygame.image.load("CarRace/images/car-top_view.png")
@@ -35,95 +36,71 @@ font = pygame.font.Font(None, 36)
 
 # Initial road position
 road_y = 0
+speed_direction = 0
+rotating_direction = 0
 
 
 # Game Loop
 while True:
-   for event in pygame.event.get():
+    for event in pygame.event.get():
        if event.type == pygame.QUIT:
            sys.exit()
        elif event.type == pygame.KEYUP:
-           if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-               acceleration = 0
+            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                acceleration = 0
+                speed_direction = 0
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                rotating_direction = 0
+       elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                speed_direction = 1
+            elif event.key == pygame.K_DOWN:
+                speed_direction = -1
+            elif event.key == pygame.K_LEFT:
+                rotating_direction = 1
+            elif event.key == pygame.K_RIGHT:
+                rotating_direction = -1
 
-
-   keys = pygame.key.get_pressed()
-
-
-   if keys[pygame.K_UP]:
-       acceleration = 0.05  # Move forward
-   elif keys[pygame.K_DOWN]:
-       acceleration = -0.05  # Move backward
-   else:
-       # Slow down if neither up nor down keys are pressed
-       if speed > 0:
-           acceleration = -deceleration
-       else:
-           acceleration = 0
-
-
-   if speed >= 0:  # Check if the car is moving before allowing turning
-       if keys[pygame.K_LEFT]:
-           angular_velocity = 2  # Turn left
-       elif keys[pygame.K_RIGHT]:
-           angular_velocity = -2  # Turn right
-       else:
-           angular_velocity = 0
-   else:
-       angular_velocity = 0
-
-
-   # Update angular velocity (turning)
-   rotation_angle += angular_velocity
-
-
-   # Update velocity components based on the angle
-   dx = -math.sin(math.radians(rotation_angle)) * speed
-   dy = -math.cos(math.radians(rotation_angle)) * speed  # Negative due to inverted Y-axis
-
-
-   # Update speed based on acceleration and deceleration
-   speed += acceleration
-   if speed < 0:
-       speed = 0
-   elif speed > max_speed:
-       speed = max_speed
-
-
-   # Update player position
-   playerX += dx
-   playerY += dy
+    thePlayer.rotate(rotating_direction)
+    if speed_direction == 1:
+        thePlayer.speed_up()
+    elif speed_direction == -1:
+        thePlayer.break_up()
+    else:
+        thePlayer.drive()
 
 
    # Update road position to create the illusion of movement
-   road_y += speed
+ #   road_y += speed
 
 
    # Reset road position when it goes beyond the image height
-   if road_y > road_image.get_height():
-       road_y = 0
+#   if road_y > road_image.get_height():
+#       road_y = 0
 
 
    # Clear the screen
-   screen.fill((192, 192, 192))  # Light Gray background
+    screen.fill((192, 192, 192))  # Light Gray background
 
 
    # Draw the road
-   screen.blit(road_image, (0, -road_y))
-   screen.blit(road_image, (0, -road_y + road_image.get_height())) 
+    screen.blit(road_image, (0, -road_y))
+    screen.blit(road_image, (0, -road_y + road_image.get_height())) 
 
 
    # Draw the car with rotation
-   player = pygame.Rect((playerX - (carWidth / 2)), (playerY - (carHeight / 2)), carWidth, carHeight)
-   rotated_image = pygame.transform.rotate(car_image, rotation_angle)
-   rotated_rect = rotated_image.get_rect(center=player.center)
-   screen.blit(rotated_image, rotated_rect.topleft)
+#   player = pygame.Rect((playerX - (carWidth / 2)), (playerY - (carHeight / 2)), carWidth, carHeight)
+#   rotated_image = pygame.transform.rotate(car_image, rotation_angle)
+#   rotated_rect = rotated_image.get_rect(center=player.center)
+#   screen.blit(rotated_image, rotated_rect.topleft)
+    thePlayer.move()
+    thePlayer.draw()
+
+    # Draw speed indicator
+    speed = thePlayer.get_speed()
+    speed_text = font.render(f"Speed: {speed:.2f}", True, (0, 0, 0))
+    screen.blit(speed_text, (600, 20))
 
 
-   # Draw speed indicator
-   speed_text = font.render(f"Speed: {speed:.2f}", True, (0, 0, 0))
-   screen.blit(speed_text, (600, 20))
-
-
-   pygame.display.update()
-   clock.tick(60)
+    pygame.display.update()
+    clock.tick(60)
